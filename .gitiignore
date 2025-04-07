@@ -1,0 +1,36 @@
+# Go binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace and module cache
+/vendor/
+Gopkg.lock
+Gopkg.toml
+
+# IDE/Editor specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Operating system specific files
+.DS_Store
+Thumbs.db
+
+# Go build artifacts
+*.a
+*.o
+*.out
+
+# Coverage files
+*.cov
+*.coverage
+
+# Go testing cache
+*.test
+
