@@ -1,0 +1,32 @@
+package bst
+
+import (
+	"crypto/rand"
+	"encoding/hex"
+
+	jsoniter "github.com/json-iterator/go"
+)
+
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+func (t *Token) GenerateToken(fields any) (token string, err error) {
+	data, err := json.Marshal(fields)
+	if err != nil {
+		return "", err
+	}
+
+	var nonce = make([]byte, t.gcm.NonceSize())
+
+	_, err = rand.Read(nonce)
+	if err != nil {
+		return "", err
+	}
+
+	encrypted := t.gcm.Seal(nil, nonce, data, nil)
+	
+
+
+	nonce = append(nonce, encrypted...)
+	return hex.EncodeToString(nonce), nil
+}
