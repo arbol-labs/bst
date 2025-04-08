@@ -3,6 +3,9 @@ package bst
 import (
 	"crypto/rand"
 	"encoding/hex"
+
+	"time"
+
 	"github.com/arbol-labs/bst/pkg/variables"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -28,9 +31,9 @@ func (t *Token) GenerateCustomToken(fields any) (token string, err error) {
 	hash := generateHash(variables.CustomFieldsTokenType, nonce, t.hash)
 
 	t.builder.WriteString(variables.CustomFieldsTokenType)
-	t.builder.WriteString(".")
+	t.builder.WriteRune('.')
 	t.builder.WriteString(hex.EncodeToString(nonce))
-	t.builder.WriteString(".")
+	t.builder.WriteRune('.')
 	t.builder.WriteString(hex.EncodeToString(hash))
 
 	token = t.builder.String()
@@ -45,7 +48,23 @@ func (t *Token) GenerateCustomToken(fields any) (token string, err error) {
 
 
 // <type>.<ttl>.<hash>
+// no encryption
 // this function will generate a token which only conatains a ttl, best used for simple and lightweight tokens
-func (t *Token) GenerateTTLToken() (token string, err error) {
-	return "", nil
+func (t *Token) GenerateTTLToken(ttl time.Time) (token string, err error) {
+	ttlStr := ttl.Format(time.RFC3339)
+
+	tokenBytes := []byte(ttlStr)
+
+	t.builder.WriteString(variables.TtlToken)
+	t.builder.WriteRune('.')
+	t.builder.WriteString(hex.EncodeToString(tokenBytes))
+
+	hash := generateHash(variables.TtlToken, tokenBytes, t.hash)
+	t.builder.WriteRune('.')
+	t.builder.WriteString(hex.EncodeToString(hash))
+	token = t.builder.String()
+
+	t.builder.Reset()
+
+	return token, nil
 }

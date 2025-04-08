@@ -11,24 +11,16 @@ func  BenchmarkRoundTrip(b *testing.B) {
 	key2 := make([]byte, 32)
 	encoder := New(key1, key2)
 
-	f := StandardFields{
-		IssuedAt: time.Now(),
-		Expiration: time.Now(),
-		Audience: "hey",
-		Issuer: "hey",
-	}
-
-	var x StandardFields
 
 	b.ResetTimer()
 
 	for b.Loop() {
-		token, err := encoder.GenerateCustomToken(f)
+		token, err := encoder.GenerateTTLToken(time.Now().Add(1 * time.Hour))
 		if err != nil {
 		b.Fatal(err)
 		}
 
-		err = encoder.ParseToken(token, &x)
+		err = encoder.ValidateTTLToken(token)
 		if err != nil {
 			b.Fatal(err)
 		}
