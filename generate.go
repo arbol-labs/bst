@@ -2,8 +2,7 @@ package bst
 
 import (
 	"crypto/rand"
-	"encoding/hex" 
-
+	"encoding/hex"
 	"github.com/arbol-labs/bst/pkg/variables"
 	jsoniter "github.com/json-iterator/go"
 )
@@ -37,7 +36,6 @@ func (t *Token) GenerateToken(fields any) (token string, err error) {
 	token = t.builder.String()
 
 	t.builder.Reset()
-
 
 	return token, nil
 }

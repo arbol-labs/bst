@@ -18,13 +18,20 @@ func  BenchmarkRoundTrip(b *testing.B) {
 		Issuer: "hey",
 	}
 
+	var x StandardFields
+
 	b.ResetTimer()
 
 	for b.Loop() {
-		 _, err := encoder.GenerateToken(f)
-		 if err != nil {
+		token, err := encoder.GenerateToken(f)
+		if err != nil {
+		b.Fatal(err)
+		}
+
+		err = encoder.ParseToken(token, &x)
+		if err != nil {
 			b.Fatal(err)
-		 }
+		}
 	}
 }
 

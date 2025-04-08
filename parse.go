@@ -1,16 +1,45 @@
 package bst
 
-import "encoding/hex"
+import (
+	"crypto/hmac"
+	"encoding/hex"
+	"fmt"
+	"strings"
+
+	"github.com/arbol-labs/bst/pkg/variables"
+)
 
 
 func (t *Token) ParseToken(token string, dst any) error {
-	decodedHex, err := hex.DecodeString(token)
+	sections := strings.Split(token, ".")
+
+	if len(sections) != 3 {
+		return fmt.Errorf("invalid token")
+	}
+
+	if sections[0] != variables.CustomFieldsTokenType {
+		return fmt.Errorf("invalid token type")
+	}
+
+	
+	decodedHash, err := hex.DecodeString(sections[2])
+	if err != nil {
+		return fmt.Errorf("failed to decode hash section")
+	}
+
+	decodedCipher, err := hex.DecodeString(sections[1])
 	if err != nil {
 		return err
 	}
+	
+	hash := generateHash(variables.CustomFieldsTokenType, decodedCipher, t.hash)
 
-	nonce := decodedHex[:t.gcm.NonceSize()]
-	ct := decodedHex[t.gcm.NonceSize():]
+	if !hmac.Equal(decodedHash, hash) {
+		return fmt.Errorf("token has been tampered with")
+	}
+
+	nonce := decodedCipher[:t.gcm.NonceSize()]
+	ct := decodedCipher[t.gcm.NonceSize():]
 
 	data, err := t.gcm.Open(nil, nonce, ct, nil)
 	if err != nil {
