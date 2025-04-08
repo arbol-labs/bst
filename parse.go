@@ -10,6 +10,8 @@ import (
 )
 
 
+
+// this function is used to validate tokens with cutom fields. it takes in the token and the destination struct, it will decode the token fields into the token
 func (t *Token) ParseToken(token string, dst any) error {
 	sections := strings.Split(token, ".")
 

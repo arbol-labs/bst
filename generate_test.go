@@ -23,7 +23,7 @@ func  BenchmarkRoundTrip(b *testing.B) {
 	b.ResetTimer()
 
 	for b.Loop() {
-		token, err := encoder.GenerateToken(f)
+		token, err := encoder.GenerateCustomToken(f)
 		if err != nil {
 		b.Fatal(err)
 		}
@@ -48,7 +48,7 @@ func  TestRoundTrip(t *testing.T) {
 		Issuer: "hey",
 	}
 
-	token, err := encoder.GenerateToken(f)
+	token, err := encoder.GenerateCustomToken(f)
 	if err != nil {
 		t.Fatal(err)
 	}

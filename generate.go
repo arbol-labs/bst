@@ -10,7 +10,7 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 
-func (t *Token) GenerateToken(fields any) (token string, err error) {
+func (t *Token) GenerateCustomToken(fields any) (token string, err error) {
 	data, err := json.Marshal(fields)
 	if err != nil {
 		return "", err
@@ -42,4 +42,10 @@ func (t *Token) GenerateToken(fields any) (token string, err error) {
 
 
 
-// <type>.<token>.<sig>  
+
+
+// <type>.<ttl>.<hash>
+// this function will generate a token which only conatains a ttl, best used for simple and lightweight tokens
+func (t *Token) GenerateTTLToken() (token string, err error) {
+	return "", nil
+}
