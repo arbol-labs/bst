@@ -2,13 +2,17 @@ package bst
 
 import (
 	"crypto/cipher"
+	"hash"
+	"strings"
 	"time"
 )
 
 
 type Token struct {
+	hash hash.Hash
 	block cipher.Block
 	gcm cipher.AEAD
+	builder strings.Builder
 }
 
 

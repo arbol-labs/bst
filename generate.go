@@ -2,13 +2,14 @@ package bst
 
 import (
 	"crypto/rand"
-	"encoding/hex"
+	"encoding/hex" 
 
+	"github.com/arbol-labs/bst/pkg/variables"
 	jsoniter "github.com/json-iterator/go"
 )
 
-
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 
 func (t *Token) GenerateToken(fields any) (token string, err error) {
 	data, err := json.Marshal(fields)
@@ -17,16 +18,30 @@ func (t *Token) GenerateToken(fields any) (token string, err error) {
 	}
 
 	var nonce = make([]byte, t.gcm.NonceSize())
-
 	_, err = rand.Read(nonce)
 	if err != nil {
 		return "", err
 	}
-
 	encrypted := t.gcm.Seal(nil, nonce, data, nil)
-	
-
 
 	nonce = append(nonce, encrypted...)
-	return hex.EncodeToString(nonce), nil
+
+	hash := generateHash(variables.CustomFieldsTokenType, nonce, t.hash)
+
+	t.builder.WriteString(variables.CustomFieldsTokenType)
+	t.builder.WriteString(".")
+	t.builder.WriteString(hex.EncodeToString(nonce))
+	t.builder.WriteString(".")
+	t.builder.WriteString(hex.EncodeToString(hash))
+
+	token = t.builder.String()
+
+	t.builder.Reset()
+
+
+	return token, nil
 }
+
+
+
+// <type>.<token>.<sig>  

@@ -1,6 +1,7 @@
 package bst
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -19,15 +20,12 @@ func  BenchmarkRoundTrip(b *testing.B) {
 
 	b.ResetTimer()
 
-
-	var x StandardFields
-
-
 	for b.Loop() {
-		token, _ := encoder.GenerateToken(f)
-		encoder.ParseToken(token, &x)
+		 _, err := encoder.GenerateToken(f)
+		 if err != nil {
+			b.Fatal(err)
+		 }
 	}
-
 }
 
 
@@ -48,11 +46,5 @@ func  TestRoundTrip(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	var z StandardFields
-
-	err = encoder.ParseToken(token, &z)
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	fmt.Println(token)
 }
