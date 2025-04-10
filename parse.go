@@ -11,7 +11,7 @@ import (
 )
 
 // this function is used to validate tokens with cutom fields. it takes in the token and the destination struct, it will decode the token fields into the token
-func (t *Token) ParseToken(token string, dst *any) error {
+func (t *Token) ParseToken(token string, dst any) error {
 	sections := strings.Split(token, ".")
 
 	if len(sections) != 3 {
@@ -47,7 +47,7 @@ func (t *Token) ParseToken(token string, dst *any) error {
 		return err
 	}
 
-	return json.Unmarshal(data ,dst)
+	return json.Unmarshal(data , dst)
 }
 
 func (t *Token) ValidateTTLToken(token string) (error) {

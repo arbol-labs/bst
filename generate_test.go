@@ -1,7 +1,6 @@
 package bst
 
 import (
-	"fmt"
 	"testing"
 	"time"
 )
@@ -40,10 +39,28 @@ func  TestRoundTrip(t *testing.T) {
 		Issuer: "hey",
 	}
 
+	var z StandardFields
+
 	token, err := encoder.GenerateCustomToken(f)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	fmt.Println(token)
+	err = encoder.ParseToken(token, &z)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if z.IssuedAt.Unix() != f.IssuedAt.Unix() {
+		t.Errorf("IssuedAt mismatch: got %v, want %v", z.IssuedAt, f.IssuedAt)
+	}
+	if z.Expiration.Unix() != f.Expiration.Unix() {
+		t.Errorf("Expiration mismatch: got %v, want %v", z.Expiration, f.Expiration)
+	}
+	if z.Audience != f.Audience {
+		t.Errorf("Audience mismatch: got %v, want %v", z.Audience, f.Audience)
+	}
+	if z.Issuer != f.Issuer {
+		t.Errorf("Issuer mismatch: got %v, want %v", z.Issuer, f.Issuer)
+	}
 }
